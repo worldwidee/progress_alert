@@ -1,6 +1,6 @@
 name: progress_alert
-description: A new Flutter package project.
-version: 0.0.1
+description: Simple way to show your asynchronous operations in the background to the user
+version: 0.0.3
 homepage: https://github.com/worldwidee/progress_alert
 
 environment:

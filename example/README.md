@@ -2,10 +2,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
-import 'progressAlert.dart';
-
+import 'package:progress_alert/progress_alert.dart';
 void main() {
   runApp(const MyApp());
 }
@@ -38,7 +35,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  final controller = Get.put(ProgressController());
+  final controller = ProgressPanel();
   void _incrementCounter() {
     ProgressItem progress = ProgressItem(
         process: func,
@@ -56,8 +53,15 @@ class _MyHomePageState extends State<MyHomePage> {
     controller.addProcess(progress);
   }
 
+  @override
+  void initState(){
+    controller.setFailDuration=const Duration(seconds: 10);
+    //If you want the error not to be cleared from the screen turn false
+    controller.changeRemoveFailAfterDuration=true;
+    super.initState();
+  }
   Future<void> func() async {
-    //open comment lines if u want to see how fail looks like
+    //open comment lines if you want to see how fail looks like
     //List<int> list = [1, 2];
     await Future.delayed(const Duration(seconds: 3));
     //list.singleWhere((element) => element == 3);
@@ -94,5 +98,4 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
-
 ```

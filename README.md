@@ -15,6 +15,7 @@ Progress Alert is customizable alert for showing process which is progressing in
 	- Change height
 	- Change position as top/bottom
 	- Change icons
+  - Change display time of failed process alert
 
 
 ## Getting started
@@ -51,11 +52,17 @@ Add ProgressAlert() to Material App's builder as example
 Start controller
 
 ```dart
-final controller = Get.put(ProgressController());
+final controller = ProgressPanel();
 ```
 Create progress
 
 ```dart
+Future<void> func() async {
+    await Future.delayed(const Duration(seconds: 3));
+    setState(() {
+      _counter++;
+    });
+  }
 ProgressItem progress = ProgressItem(
     process: func,
     processText: "Counter Incrementing",
@@ -108,6 +115,15 @@ ProgressItem progress = ProgressItem(
     onError: (e) {
       print("Progress Failed:$e");
     });
+```
+
+Displaying Fail
+
+```dart
+final controller = ProgressPanel();
+controller.setFailDuration=const Duration(seconds: 10);
+//If you want the error not to be cleared from the screen turn false
+controller.changeRemoveFailAfterDuration=true;
 ```
 
 ## Contributions

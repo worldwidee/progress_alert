@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'controller/progress_controller.dart';
+
+
 class ProgressAlert extends StatefulWidget {
   String redoText, hideText, cancelText;
   Widget? errorIcon, progressIcon;
@@ -21,6 +24,7 @@ class ProgressAlert extends StatefulWidget {
       this.height = 50,
       this.isTop = true})
       : super(key: key) {
+    Get.put(ProgressController());
     errorIcon ??= Icon(
       Icons.error,
       size: 20,
@@ -41,13 +45,14 @@ class _ProgressAlertState extends State<ProgressAlert> {
   Widget? errorIcon, progressIcon;
   double height;
   bool isTop;
-  double extraPadding=0;
+  double extraPadding = 0;
   _ProgressAlertState(this.redoText, this.hideText, this.cancelText,
-      this.errorIcon, this.progressIcon, this.height, this.isTop){
-        if(!kIsWeb&&(Platform.isAndroid || Platform.isIOS)){
-          extraPadding=32;
-        }
-      }
+      this.errorIcon, this.progressIcon, this.height, this.isTop) {
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+      extraPadding = 32;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetBuilder<ProgressController>(builder: (_) {
@@ -58,8 +63,7 @@ class _ProgressAlertState extends State<ProgressAlert> {
             children: [
               for (var progress in controller.fails)
                 showProgress(progress, failed: true),
-              for (var progress in controller.progresses)
-                showProgress(progress)
+              for (var progress in controller.progresses) showProgress(progress)
             ],
           ));
     });
@@ -124,59 +128,34 @@ class _ProgressAlertState extends State<ProgressAlert> {
   }
 }
 
+class ProgressPanel {
+  get failDuration => Get.find<ProgressController>().failDuration;
 
-class ProgressController extends GetxController {
-  final _progresses = [];
-  final _fails = [];
-  get progresses => _progresses;
-  get fails => _fails;
-  late int _failDuration;
-  bool removeFailAfterDuration;
-  ProgressController(
-      {this.removeFailAfterDuration = true, int failDuration = 10}) {
-    _failDuration = failDuration;
+  set setFailDuration(Duration duration) {
+    Get.find<ProgressController>().setFailDuration = duration;
   }
+
+  get removeFailAfterDuration =>
+      Get.find<ProgressController>().removeFailAfterDuration;
+
+  set changeRemoveFailAfterDuration(bool status) {
+    Get.find<ProgressController>().removeFailAfterDuration = status;
+  }
+
   void addProcess(ProgressItem progress) {
-    if (_fails.any((element) => element == progress)) {
-      _fails.remove(progress);
-    }
-    _progresses.add(progress);
-    progress.start();
-    update();
+    Get.find<ProgressController>().addProcess(progress);
   }
 
   void removeFail(ProgressItem progress) {
-    if (_fails.any((element) => element == progress)) {
-      _fails.remove(progress);
-      update();
-    }
+    Get.find<ProgressController>().removeFail(progress);
   }
 
   void removeProgress(ProgressItem progress) {
-    _progresses.remove(progress);
-    update();
+    Get.find<ProgressController>().removeProgress(progress);
   }
 
   void addFail(ProgressItem progress) {
-    _fails.add(progress);
-    if (removeFailAfterDuration) {
-      bool reRun = false;
-      var timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
-        if (!_fails.any((element) => element == progress)) {
-          reRun = true;
-          timer.cancel();
-        }
-      });
-      Future.delayed(Duration(seconds: _failDuration)).then((value) {
-        if (timer.isActive) {
-          timer.cancel();
-        }
-        if (!reRun) {
-          removeFail(progress);
-        }
-      });
-    }
-    update();
+    Get.find<ProgressController>().addFail(progress);
   }
 }
 

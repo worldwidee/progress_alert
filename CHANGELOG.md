@@ -7,3 +7,10 @@
 	- Change position as top/bottom
 	- Change icons
 
+## 0.0.2
+
+- Changing example
+
+## 0.0.3
+
+- ProgressPanel Added
