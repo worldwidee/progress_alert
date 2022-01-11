@@ -2,10 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'controller/progress_controller.dart';
-import 'controller/progress_item.dart';
-import 'progress_alert.dart';
-
+import 'package:progress_alert/progress_alert.dart';
 void main() {
   runApp(const MyApp());
 }

@@ -10,16 +10,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  progress_alert:
   get: ^4.3.8
   google_fonts: ^2.2.0
   cupertino_icons: ^1.0.2
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^1.0.0
-
+dependency_overrides:
+  progress_alert:
+    path: ..
 flutter:
 
   uses-material-design: true

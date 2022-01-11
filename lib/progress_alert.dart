@@ -1,12 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
-import 'src/progress_controller.dart';
-import 'src/progress_item.dart';
 
 class ProgressAlert extends StatefulWidget {
   String redoText, hideText, cancelText;
@@ -127,3 +125,97 @@ class _ProgressAlertState extends State<ProgressAlert> {
 }
 
 
+class ProgressController extends GetxController {
+  final _progresses = [];
+  final _fails = [];
+  get progresses => _progresses;
+  get fails => _fails;
+  late int _failDuration;
+  bool removeFailAfterDuration;
+  ProgressController(
+      {this.removeFailAfterDuration = true, int failDuration = 10}) {
+    _failDuration = failDuration;
+  }
+  void addProcess(ProgressItem progress) {
+    if (_fails.any((element) => element == progress)) {
+      _fails.remove(progress);
+    }
+    _progresses.add(progress);
+    progress.start();
+    update();
+  }
+
+  void removeFail(ProgressItem progress) {
+    if (_fails.any((element) => element == progress)) {
+      _fails.remove(progress);
+      update();
+    }
+  }
+
+  void removeProgress(ProgressItem progress) {
+    _progresses.remove(progress);
+    update();
+  }
+
+  void addFail(ProgressItem progress) {
+    _fails.add(progress);
+    if (removeFailAfterDuration) {
+      bool reRun = false;
+      var timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+        if (!_fails.any((element) => element == progress)) {
+          reRun = true;
+          timer.cancel();
+        }
+      });
+      Future.delayed(Duration(seconds: _failDuration)).then((value) {
+        if (timer.isActive) {
+          timer.cancel();
+        }
+        if (!reRun) {
+          removeFail(progress);
+        }
+      });
+    }
+    update();
+  }
+}
+
+class ProgressItem {
+  String processText;
+  String errorText;
+  String? successText;
+  Future<void> Function() process;
+  void Function()? onCancel;
+  void Function(dynamic error)? onError;
+  void Function()? onDone;
+  late StreamSubscription<void> _streaming;
+  void start() {
+    _streaming = process().asStream().listen((event) {}, onDone: () {
+      Get.find<ProgressController>().removeProgress(this);
+      if (onDone != null) onDone!();
+    }, onError: (e) {
+      Get.find<ProgressController>().removeProgress(this);
+      Get.find<ProgressController>().addFail(this);
+      if (onError != null) onError!(e);
+      if (onDone != null) onDone!();
+    });
+  }
+
+  void cancel() {
+    _streaming.pause();
+    _streaming.cancel().then((value) {
+      Get.find<ProgressController>().removeProgress(this);
+      if (onCancel != null) onCancel!();
+      if (onDone != null) onDone!();
+    });
+  }
+
+  ProgressItem(
+      {required this.process,
+      this.onCancel,
+      this.onError,
+      this.onDone,
+      this.processText = "Processing",
+      this.errorText = "Process Failed!",
+      this.successText});
+}
