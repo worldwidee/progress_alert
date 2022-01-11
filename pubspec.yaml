@@ -24,16 +24,3 @@ dev_dependencies:
 # The following section is specific to Flutter.
 flutter:
 
-  plugin:
-    platforms:
-      android:
-        package: com.example.hello
-        pluginClass: HelloPlugin
-      ios:
-        pluginClass: HelloPlugin
-      macos:
-        pluginClass: HelloPlugin
-      web:
-        pluginClass: HelloPlugin
-      windows:
-        pluginClass: HelloPlugin
