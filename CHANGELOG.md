@@ -14,3 +14,11 @@
 ## 0.0.3
 
 - ProgressPanel Added
+
+## 0.0.4
+
+- Packages updated
+
+## 0.0.5
+
+- Upgraded flutter and packages

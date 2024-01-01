@@ -8,7 +8,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'controller/progress_controller.dart';
 
-
 class ProgressAlert extends StatefulWidget {
   String redoText, hideText, cancelText;
   Widget? errorIcon, progressIcon;
@@ -72,56 +71,58 @@ class _ProgressAlertState extends State<ProgressAlert> {
   Widget showProgress(ProgressItem progress, {bool failed = false}) {
     return Opacity(
       opacity: 0.8,
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        height: height,
-        color: Colors.black,
-        child: Row(
-          children: [
-            const SizedBox(
-              width: 5,
-            ),
-            SizedBox(
-              height: 20,
-              width: 20,
-              child: !failed ? progressIcon : errorIcon,
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Expanded(
-              child: Text(
-                !failed ? progress.processText + "..." : progress.errorText,
-                style: GoogleFonts.titilliumWeb(
-                    color: !failed ? Colors.white : Colors.red,
-                    fontSize: 16,
-                    fontWeight: FontWeight.normal),
+      child: Material(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: height,
+          color: Colors.black,
+          child: Row(
+            children: [
+              const SizedBox(
+                width: 5,
               ),
-            ),
-            if (failed)
+              SizedBox(
+                height: 20,
+                width: 20,
+                child: !failed ? progressIcon : errorIcon,
+              ),
+              const SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: Text(
+                  !failed ? "${progress.processText}..." : progress.errorText,
+                  style: GoogleFonts.titilliumWeb(
+                      color: !failed ? Colors.white : Colors.red,
+                      fontSize: 16,
+                      fontWeight: FontWeight.normal),
+                ),
+              ),
+              if (failed)
+                TextButton(
+                    onPressed: () {
+                      controller.addProcess(progress);
+                    },
+                    child: Text(redoText,
+                        style: GoogleFonts.titilliumWeb(
+                            color: Colors.green,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500))),
               TextButton(
                   onPressed: () {
-                    controller.addProcess(progress);
+                    if (failed) {
+                      controller.removeFail(progress);
+                    } else {
+                      progress.cancel();
+                    }
                   },
-                  child: Text(redoText,
+                  child: Text(failed ? hideText : cancelText,
                       style: GoogleFonts.titilliumWeb(
-                          color: Colors.green,
+                          color: failed ? Colors.grey : Colors.red,
                           fontSize: 16,
-                          fontWeight: FontWeight.w500))),
-            TextButton(
-                onPressed: () {
-                  if (failed) {
-                    controller.removeFail(progress);
-                  } else {
-                    progress.cancel();
-                  }
-                },
-                child: Text(failed ? hideText : cancelText,
-                    style: GoogleFonts.titilliumWeb(
-                        color: failed ? Colors.grey : Colors.red,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500)))
-          ],
+                          fontWeight: FontWeight.w500)))
+            ],
+          ),
         ),
       ),
     );

@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:progress_alert/progress_alert.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -53,12 +52,13 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   @override
-  void initState(){
-    controller.setFailDuration=const Duration(seconds: 10);
+  void initState() {
+    controller.setFailDuration = const Duration(seconds: 10);
     //If you want the error not to be cleared from the screen turn false
-    controller.changeRemoveFailAfterDuration=true;
+    controller.changeRemoveFailAfterDuration = true;
     super.initState();
   }
+
   Future<void> func() async {
     //open comment lines if you want to see how fail looks like
     //List<int> list = [1, 2];
@@ -84,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             Text(
               '$_counter',
-              style: Theme.of(context).textTheme.headline4,
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
           ],
         ),
