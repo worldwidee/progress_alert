@@ -40,13 +40,13 @@ class _MyHomePageState extends State<MyHomePage> {
         processText: "Counter Incrementing",
         errorText: "Counter Incrementing Failed!",
         onCancel: () {
-          print("Progress Cancelled");
+          debugPrint("Progress Cancelled");
         },
         onDone: () {
-          print("Progress Done");
+          debugPrint("Progress Done");
         },
         onError: (e) {
-          print("Progress Failed:$e");
+          debugPrint("Progress Failed:$e");
         });
     controller.addProcess(progress);
   }
