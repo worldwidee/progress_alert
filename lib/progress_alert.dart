@@ -9,44 +9,36 @@ import 'package:google_fonts/google_fonts.dart';
 import 'controller/progress_controller.dart';
 
 class ProgressAlert extends StatefulWidget {
-  String redoText, hideText, cancelText;
-  Widget? errorIcon, progressIcon;
-  double height;
-  bool isTop;
+  final String redoText, hideText, cancelText;
+  final Widget? errorIcon, progressIcon;
+  final double height;
+  final bool isTop;
   ProgressAlert(
       {Key? key,
       this.redoText = "Redo",
       this.hideText = "Hide",
       this.cancelText = "Cancel",
-      this.errorIcon,
-      this.progressIcon,
+      this.errorIcon = const Icon(
+        Icons.error,
+        size: 20,
+        color: Color.fromRGBO(245, 124, 0, 1),
+      ),
+      this.progressIcon = const CircularProgressIndicator(),
       this.height = 50,
       this.isTop = true})
       : super(key: key) {
     Get.put(ProgressController());
-    errorIcon ??= Icon(
-      Icons.error,
-      size: 20,
-      color: Colors.orange[700],
-    );
-    progressIcon ??= const CircularProgressIndicator();
   }
 
   @override
-  _ProgressAlertState createState() => _ProgressAlertState(
-      redoText, hideText, cancelText, errorIcon, progressIcon, height, isTop);
+  State<ProgressAlert> createState() => _ProgressAlertState();
 }
 
 class _ProgressAlertState extends State<ProgressAlert> {
   final controller = Get.find<ProgressController>();
 
-  String redoText, hideText, cancelText;
-  Widget? errorIcon, progressIcon;
-  double height;
-  bool isTop;
   double extraPadding = 0;
-  _ProgressAlertState(this.redoText, this.hideText, this.cancelText,
-      this.errorIcon, this.progressIcon, this.height, this.isTop) {
+  _ProgressAlertState() {
     if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
       extraPadding = 32;
     }
@@ -56,8 +48,8 @@ class _ProgressAlertState extends State<ProgressAlert> {
   Widget build(BuildContext context) {
     return GetBuilder<ProgressController>(builder: (_) {
       return Positioned(
-          top: isTop ? extraPadding : null,
-          bottom: isTop ? null : 0,
+          top: widget.isTop ? extraPadding : null,
+          bottom: widget.isTop ? null : 0,
           child: Column(
             children: [
               for (var progress in controller.fails)
@@ -74,7 +66,7 @@ class _ProgressAlertState extends State<ProgressAlert> {
       child: Material(
         child: Container(
           width: MediaQuery.of(context).size.width,
-          height: height,
+          height: widget.height,
           color: Colors.black,
           child: Row(
             children: [
@@ -84,7 +76,7 @@ class _ProgressAlertState extends State<ProgressAlert> {
               SizedBox(
                 height: 20,
                 width: 20,
-                child: !failed ? progressIcon : errorIcon,
+                child: !failed ? widget.progressIcon : widget.errorIcon,
               ),
               const SizedBox(
                 width: 10,
@@ -103,7 +95,7 @@ class _ProgressAlertState extends State<ProgressAlert> {
                     onPressed: () {
                       controller.addProcess(progress);
                     },
-                    child: Text(redoText,
+                    child: Text(widget.redoText,
                         style: GoogleFonts.titilliumWeb(
                             color: Colors.green,
                             fontSize: 16,
@@ -116,7 +108,7 @@ class _ProgressAlertState extends State<ProgressAlert> {
                       progress.cancel();
                     }
                   },
-                  child: Text(failed ? hideText : cancelText,
+                  child: Text(failed ? widget.hideText : widget.cancelText,
                       style: GoogleFonts.titilliumWeb(
                           color: failed ? Colors.grey : Colors.red,
                           fontSize: 16,
